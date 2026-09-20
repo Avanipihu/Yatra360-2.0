@@ -9,7 +9,7 @@ export default function Landing() {
       {/* Header */}
       <header className="landing-header">
         <img
-          src="/yatra360picture logo.png"
+          src="/yatra360-logo.png"
           alt="Yatra360"
           className="landing-logo"
         />
@@ -42,21 +42,12 @@ export default function Landing() {
           </p>
 
           <div className="landing-actions">
-
             <button
               className="landing-primary-btn"
               onClick={() => navigate('/login')}
             >
               Get started →
             </button>
-
-            <button
-              className="landing-guest-btn"
-              onClick={() => navigate('/login')}
-            >
-              Continue as guest
-            </button>
-
           </div>
 
         </section>
@@ -74,12 +65,15 @@ export default function Landing() {
               className="route-path"
               viewBox="0 0 400 500"
               preserveAspectRatio="none"
+              aria-hidden="true"
             >
               <path
-                d="M 65 440
-                   C 115 415, 115 350, 165 325
-                   C 220 298, 205 235, 205 195
-                   C 205 145, 255 115, 335 60"
+                d="
+                  M 65 440
+                  C 115 415, 115 350, 165 325
+                  C 220 298, 205 235, 205 195
+                  C 205 145, 255 115, 335 60
+                "
               />
             </svg>
 
