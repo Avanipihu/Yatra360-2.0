@@ -8,7 +8,7 @@ export default function RoleSelection() {
   }
 
   const handleBusiness = () => {
-    navigate('/business')
+    window.location.href = 'https://yatra360-buisness.onrender.com/'
   }
 
   return (
