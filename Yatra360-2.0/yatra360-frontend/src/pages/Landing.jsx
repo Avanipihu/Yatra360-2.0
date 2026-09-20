@@ -56,19 +56,23 @@ export default function Landing() {
 
           <div className="route-map">
 
-            <div className="route-line"></div>
+           <div className="hero-route-line"></div>
 
-            <div className="route-stop stop-one">
-              <span></span>
-            </div>
+<div className="hero-route-stop stop-one">
+  <span></span>
+</div>
 
-            <div className="route-stop stop-two">
-              <span></span>
-            </div>
+<div className="hero-route-stop stop-two">
+  <span></span>
+</div>
 
-            <div className="route-stop stop-three">
-              <span></span>
-            </div>
+<div className="hero-route-stop stop-three">
+  <span></span>
+</div>
+
+<div className="hero-route-stop stop-four">
+  <span></span>
+</div>
 
             <div className="route-stop stop-four">
               <span></span>
