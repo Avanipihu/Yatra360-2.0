@@ -52,46 +52,37 @@ export default function Landing() {
 
         {/* Right route illustration */}
         <section className="route-illustration">
+  <div className="route-map">
 
-          <div className="route-map">
+    <div className="route-grid"></div>
 
-            <div className="route-line"></div>
+    <div className="route-glow"></div>
 
-            <div className="route-stop stop-one">
-              <span></span>
-            </div>
+    <svg
+      className="route-path"
+      viewBox="0 0 400 500"
+      preserveAspectRatio="none"
+    >
+      <path
+        d="M 65 440
+           C 115 415, 115 350, 165 325
+           C 220 298, 205 235, 205 195
+           C 205 145, 255 115, 335 60"
+      />
+    </svg>
 
-            <div className="route-stop stop-two">
-              <span></span>
-            </div>
+    <div className="route-start">
+      <span></span>
+      <label>Start</label>
+    </div>
 
-            <div className="route-stop stop-three">
-              <span></span>
-            </div>
+    <div className="route-destination">
+      <span></span>
+      <label>Destination</label>
+    </div>
 
-            <div className="route-stop stop-four">
-              <span></span>
-            </div>
-
-            <div className="map-label label-one">
-              EXPLORE
-            </div>
-
-            <div className="map-label label-two">
-              MOVE
-            </div>
-
-            <div className="map-label label-three">
-              DISCOVER
-            </div>
-
-            <div className="map-label label-four">
-              PUNE
-            </div>
-
-          </div>
-
-        </section>
+  </div>
+</section>
 
       </main>
 
