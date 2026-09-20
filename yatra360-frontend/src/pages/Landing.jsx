@@ -6,7 +6,7 @@ export default function Landing() {
       {/* Header */}
       <header className="landing-header">
         <img
-          src="/yatra360-logo.png"
+          src="/yatra360picture logo.png"
           alt="Yatra360"
           className="landing-logo"
         />
