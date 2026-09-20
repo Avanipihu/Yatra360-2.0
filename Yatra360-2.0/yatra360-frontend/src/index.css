@@ -781,7 +781,7 @@ legend {
   overflow: hidden;
 }
 
-.route-line {
+.hero-route-line {
   position: absolute;
   width: 3px;
   height: 430px;
@@ -792,7 +792,7 @@ legend {
   transform-origin: center;
 }
 
-.route-stop {
+.hero-route-stop {
   position: absolute;
   width: 20px;
   height: 20px;
@@ -802,7 +802,7 @@ legend {
   z-index: 2;
 }
 
-.route-stop span {
+.hero-route-stop span {
   display: block;
   width: 6px;
   height: 6px;
