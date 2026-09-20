@@ -1,12 +1,13 @@
-
+import { useNavigate } from 'react-router-dom'
 export default function Landing() {
+  const navigate = useNavigate()
   return (
     <div className="landing-page">
 
       {/* Header */}
       <header className="landing-header">
         <img
-          src="/yatra360-logo.png"
+          src="/yatra360picture logo.png"
           alt="Yatra360"
           className="landing-logo"
         />
@@ -39,13 +40,13 @@ export default function Landing() {
           </p>
 
           <div className="landing-actions">
-            <button className="landing-primary-btn">
-              Get started →
+            <button
+             className="landing-primary-btn"
+             onClick={() => navigate('/login')}
+            >
+             Get started →
             </button>
 
-            <button className="landing-guest-btn">
-              Continue as guest
-            </button>
           </div>
 
         </section>
