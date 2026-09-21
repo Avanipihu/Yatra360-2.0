@@ -1,12 +1,12 @@
 import { NavLink } from 'react-router-dom'
 
 const NAV_ITEMS = [
-  { to: '/onboarding', label: 'Trip profile', icon: IconCompass },
+  { to: '/onboarding', label: 'My Trip', icon: IconCompass },
   { to: '/itinerary', label: 'Itinerary', icon: IconRoute },
-  { to: '/mobility', label: 'Smart mobility', icon: IconTransit },
-  { to: '/safety-weather', label: 'Weather & safety', icon: IconShield },
-  { to: '/crowd', label: 'Crowd redistribution', icon: IconSwap },
-  { to: '/city-reports', label: 'City reports & parking', icon: IconPin }
+  { to: '/mobility', label: 'Transit & Routes', icon: IconTransit },
+  { to: '/safety-weather', label: 'Weather & Safety', icon: IconShield },
+  { to: '/crowd', label: 'Quieter Alternatives', icon: IconSwap },
+  { to: '/city-reports', label: 'City Alerts & Parking', icon: IconPin }
 ]
 
 export default function Sidebar() {
