@@ -4,6 +4,17 @@ import { api } from '../services/api'
 import { MapContainer, TileLayer, Polyline, useMap } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 
+const PUNE_LOCATIONS = [
+  "Aga Khan Palace", "Akurdi", "Amanora Park Town", "Aundh", "Bal Gandharva", "Balewadi", "Baner",
+  "Bavdhan", "Bibwewadi", "Camp", "Chinchwad", "Dagdusheth Halwai Temple", "Deccan",
+  "FC Road", "Hadapsar", "Hinjewadi", "JM Road", "Kalyani Nagar", "Khadakwasla",
+  "Kharadi", "Kondhwa", "Koregaon Park", "Kothrud", "Lal Mahal", "Magarpatta",
+  "Osho Teerth Park", "Parvati", "Pashan", "Pashan Lake", "Pataleshwar", "Phlox Local Thali House",
+  "Pimpri", "Pune Airport", "Pune Railway Station", "Pune University", "Shaniwar Wada",
+  "Shivajinagar", "Sinhagad Fort", "Swargate", "Tulshibaug Ram Mandir & Market", "Viman Nagar",
+  "Wakad", "Wanowrie", "Yerawada"
+];
+
 function RouteBounds({ route }) {
   const map = useMap()
   useEffect(() => {
@@ -115,23 +126,35 @@ export default function Mobility() {
         <div className="form-row">
           <label>
             Starting Location
-            <input 
-              type="text" 
+            <select 
               value={fromInput} 
               onChange={e => setFromInput(e.target.value)} 
-              placeholder="e.g. Pune Railway Station" 
-              required 
-            />
+              required
+            >
+              <option value="" disabled>Select starting location</option>
+              {fromInput && !PUNE_LOCATIONS.includes(fromInput) && (
+                <option value={fromInput}>{fromInput}</option>
+              )}
+              {PUNE_LOCATIONS.map(loc => (
+                <option key={`from-${loc}`} value={loc}>{loc}</option>
+              ))}
+            </select>
           </label>
           <label>
             End Destination
-            <input 
-              type="text" 
+            <select 
               value={toInput} 
               onChange={e => setToInput(e.target.value)} 
-              placeholder="e.g. Shaniwar Wada" 
-              required 
-            />
+              required
+            >
+              <option value="" disabled>Select destination</option>
+              {toInput && !PUNE_LOCATIONS.includes(toInput) && (
+                <option value={toInput}>{toInput}</option>
+              )}
+              {PUNE_LOCATIONS.map(loc => (
+                <option key={`to-${loc}`} value={loc}>{loc}</option>
+              ))}
+            </select>
           </label>
         </div>
         <button type="submit" className="btn-primary" style={{ marginTop: '1rem' }}>Compare Routes</button>
