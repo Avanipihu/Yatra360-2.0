@@ -40,11 +40,11 @@ export default function SafetyWeather() {
       {weather && (
         <section className="weather-card">
           <div>
-            <p className="weather-temp" style={{ color: '#000' }}>{weather.tempC}&deg;C</p>
+            <p className="weather-temp" style={{ color: 'var(--paper)' }}>{weather.tempC}&deg;C</p>
             <p className="weather-location">{weather.location}</p>
           </div>
           <div className="weather-details">
-            <p>{weather.condition}</p>
+            <p style={{ color: 'var(--paper)' }}>{weather.condition}</p>
             <p className="weather-humidity">Humidity {weather.humidity}%</p>
             <p className="weather-advisory">{weather.advisory}</p>
           </div>
