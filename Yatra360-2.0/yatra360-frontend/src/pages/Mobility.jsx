@@ -117,7 +117,7 @@ export default function Mobility() {
       <header className="page-header">
         <h1>Transit & Routes</h1>
         <p className="page-sub">
-          Compared on cost, time and walking distance &mdash; not just distance on a map.
+          Compared on cost, time and walking distance &mdash; select your start and destination points.
         </p>
       </header>
 
@@ -131,7 +131,7 @@ export default function Mobility() {
               onChange={e => setFromInput(e.target.value)} 
               required
             >
-              <option value="" disabled>Select starting location</option>
+              <option value="" disabled>-- Select starting location --</option>
               {fromInput && !PUNE_LOCATIONS.includes(fromInput) && (
                 <option value={fromInput}>{fromInput}</option>
               )}
@@ -147,7 +147,7 @@ export default function Mobility() {
               onChange={e => setToInput(e.target.value)} 
               required
             >
-              <option value="" disabled>Select destination</option>
+              <option value="" disabled>-- Select destination --</option>
               {toInput && !PUNE_LOCATIONS.includes(toInput) && (
                 <option value={toInput}>{toInput}</option>
               )}
@@ -167,7 +167,7 @@ export default function Mobility() {
           {(origin || destination) && (
             <div className="stop-card" style={{ marginBottom: '1.5rem' }}>
               <div style={{ marginBottom: '0.5rem', fontSize: '0.95rem' }}>
-                <strong style={{ color: 'var(--basalt)' }}>Starting Destination:</strong> {origin ? origin.name : 'Awaiting input...'}
+                <strong style={{ color: 'var(--basalt)' }}>Starting Location:</strong> {origin ? origin.name : 'Awaiting selection...'}
               </div>
               <div style={{ fontSize: '0.95rem' }}>
                 <strong style={{ color: 'var(--basalt)' }}>End Destination:</strong> {destination ? destination.name : 'Not selected'}
@@ -176,15 +176,11 @@ export default function Mobility() {
           )}
 
           {!destination && !originId && (
-            <p className="hint-text">No destination selected. Enter your locations above or open this page from an itinerary stop's "Directions" button.</p>
-          )}
-
-          {destination && !originId && (
-            <p className="hint-text">Please enter a starting location above to view route options to {destination.name}.</p>
+            <p className="hint-text">Select both starting and end locations above and click Compare Routes, or open this page from an itinerary stop's "Directions" button.</p>
           )}
 
           {options.length === 0 && (destinationId && originId) ? (
-            <p className="hint-text">No route data available for these locations yet. Please try another search.</p>
+            <p className="hint-text">No route data available for these locations yet. Please try another selection pair.</p>
           ) : options.length > 0 && (
             <div className="route-compare">
               {options.map((opt, index) => {
