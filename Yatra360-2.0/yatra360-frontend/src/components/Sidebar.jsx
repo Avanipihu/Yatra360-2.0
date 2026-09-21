@@ -1,7 +1,7 @@
 import { NavLink } from 'react-router-dom'
 
 const NAV_ITEMS = [
-  { to: '/', label: 'Trip profile', icon: IconCompass },
+  { to: '/onboarding', label: 'Trip profile', icon: IconCompass },
   { to: '/itinerary', label: 'Itinerary', icon: IconRoute },
   { to: '/mobility', label: 'Smart mobility', icon: IconTransit },
   { to: '/safety-weather', label: 'Weather & safety', icon: IconShield },
@@ -12,9 +12,8 @@ const NAV_ITEMS = [
 export default function Sidebar() {
   return (
     <aside className="sidebar">
-      <div className="brand">
-        <span className="brand-mark" aria-hidden="true" />
-        <span className="brand-name">Yatra360</span>
+      <div className="brand" style={{ padding: '0 8px 20px 8px', justifyContent: 'center' }}>
+        <img src="/yatra360-logo.png" alt="Yatra360" style={{ maxWidth: '140px', height: 'auto', display: 'block' }} />
       </div>
       <nav className="nav">
         {NAV_ITEMS.map(({ to, label, icon: Icon }) => (
