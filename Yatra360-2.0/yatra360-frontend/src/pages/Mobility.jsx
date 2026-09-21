@@ -1,6 +1,19 @@
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { api } from '../services/api'
+import { MapContainer, TileLayer, Polyline, useMap } from 'react-leaflet'
+import 'leaflet/dist/leaflet.css'
+
+// Helper component to auto-zoom the map to fit the selected route
+function RouteBounds({ route }) {
+  const map = useMap()
+  useEffect(() => {
+    if (route && route.geometry && route.geometry.length > 0) {
+      map.fitBounds(route.geometry, { padding: [30, 30] })
+    }
+  }, [route, map])
+  return null
+}
 
 export default function Mobility() {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -10,21 +23,18 @@ export default function Mobility() {
   const [destination, setDestination] = useState(null)
   const [origin, setOrigin] = useState(null)
   const [options, setOptions] = useState([])
+  const [selectedRoute, setSelectedRoute] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
 
-  // Form input state
   const [fromInput, setFromInput] = useState(originId || '')
   const [toInput, setToInput] = useState(destinationId || '')
 
   useEffect(() => {
     let cancelled = false
     setIsLoading(true)
+    setSelectedRoute(null)
 
-    // Check if the user is using the manual search form (sending raw text locations)
     if (originId && destinationId && originId !== 'current') {
-      
-      // Hit the prototype compare endpoint (Port 8000 based on your main.py CORS setup)
-      // Note: Update this URL if your backend is hosted on Render instead of localhost
       fetch('http://localhost:8000/api/routes/compare', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -40,28 +50,31 @@ export default function Mobility() {
         setOrigin({ name: data.from, lat: data.from_coordinates.lat, lon: data.from_coordinates.lon })
         setDestination({ name: data.destination, lat: data.destination_coordinates.lat, lon: data.destination_coordinates.lon })
         
-        // Map the prototype payload format to the Yatra360 2.0 frontend UI format
         const mappedOptions = data.routes.map(r => ({
           mode: r.type,
           costInr: r.cost,
           timeMin: r.time,
           walkingM: r.walking,
-          notes: r.description
+          notes: r.description,
+          geometry: r.geometry,
+          firstLegGeometry: r.first_leg_geometry,
+          metroGeometry: r.metro_geometry,
+          lastLegGeometry: r.last_leg_geometry
         }))
         setOptions(mappedOptions)
+        if (mappedOptions.length > 0) setSelectedRoute(mappedOptions[0])
       })
       .catch(err => {
         console.error(err)
         if (!cancelled) {
             setOrigin({ name: originId })
             setDestination({ name: destinationId })
-            setOptions([]) // Failsafe empty state
+            setOptions([])
         }
       })
       .finally(() => { if (!cancelled) setIsLoading(false) })
       
     } else {
-      // Standard Yatra 360 2.0 fallback behavior (When coming from an Itinerary "Directions" click)
       const destinationPromise = destinationId
         ? api.getPlace(destinationId).catch(() => null)
         : Promise.resolve(null)
@@ -80,6 +93,7 @@ export default function Mobility() {
           setOrigin(startPlace)
           setDestination(endPlace)
           setOptions(routes)
+          if (routes.length > 0) setSelectedRoute(routes[0])
         })
         .finally(() => { if (!cancelled) setIsLoading(false) })
     }
@@ -87,7 +101,6 @@ export default function Mobility() {
     return () => { cancelled = true }
   }, [destinationId, originId])
 
-  // Triggers the URL update, which re-fires the useEffect above
   const handleSearch = (e) => {
     e.preventDefault()
     if (fromInput.trim() && toInput.trim()) {
@@ -95,10 +108,8 @@ export default function Mobility() {
     }
   }
 
-  const bbox = destination
-    ? `${destination.lon - 0.01}%2C${destination.lat - 0.008}%2C${destination.lon + 0.01}%2C${destination.lat + 0.008}`
-    : '73.83%2C18.50%2C73.87%2C18.54'
-  const marker = destination ? `&marker=${destination.lat}%2C${destination.lon}` : ''
+  // Fallback center if no route geometry is loaded
+  const defaultCenter = destination ? [destination.lat, destination.lon] : [18.52, 73.85]
 
   return (
     <div className="page">
@@ -109,7 +120,6 @@ export default function Mobility() {
         </p>
       </header>
 
-      {/* Manual Route Planning Form */}
       <form onSubmit={handleSearch} className="profile-form" style={{ marginBottom: '2rem', padding: '1.5rem', background: 'var(--paper-raised)', border: '1px solid var(--basalt-20)', borderRadius: '4px' }}>
         <h2 style={{ fontSize: '1.1rem', marginBottom: '1rem' }}>Plan a specific route</h2>
         <div className="form-row">
@@ -161,13 +171,23 @@ export default function Mobility() {
           ) : (
             <div className="route-compare">
               {options.map((opt, index) => {
-                // Safeguard reduce by passing the first option as the initial value
                 const isFastest = opt === options.reduce((a, b) => (a.timeMin < b.timeMin ? a : b), options[0]);
                 const isCheapest = opt === options.reduce((a, b) => (a.costInr < b.costInr ? a : b), options[0]);
                 const isLeastWalking = opt === options.reduce((a, b) => (a.walkingM < b.walkingM ? a : b), options[0]);
+                const isSelected = selectedRoute === opt;
 
                 return (
-                  <div key={opt.mode || index} className="route-card">
+                  <div 
+                    key={opt.mode || index} 
+                    className="route-card"
+                    onClick={() => setSelectedRoute(opt)}
+                    style={{ 
+                      cursor: 'pointer', 
+                      borderColor: isSelected ? 'var(--gold)' : 'var(--basalt-20)',
+                      boxShadow: isSelected ? '0 0 0 1px var(--gold)' : 'none',
+                      transition: 'all 0.2s'
+                    }}
+                  >
                     <h3>{opt.mode}</h3>
                     <dl className="route-stats">
                       <div><dt>Cost</dt><dd>{opt.costInr === 0 ? 'Free' : `₹${opt.costInr}`}</dd></div>
@@ -186,13 +206,38 @@ export default function Mobility() {
             </div>
           )}
 
-          <div className="map-embed">
-            <iframe
-              title="Route map"
-              src={`https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik${marker}`}
-              loading="lazy"
-            />
-            <p className="map-caption">Map data &copy; OpenStreetMap contributors</p>
+          <div className="map-embed" style={{ height: '350px', position: 'relative' }}>
+            <MapContainer 
+              center={defaultCenter} 
+              zoom={13} 
+              style={{ height: '100%', width: '100%', zIndex: 1 }}
+              scrollWheelZoom={false}
+            >
+              <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              />
+              
+              {selectedRoute && (
+                <>
+                  <RouteBounds route={selectedRoute} />
+                  
+                  {/* Render multi-modal segments if available (Bus + Metro) */}
+                  {selectedRoute.metroGeometry ? (
+                    <>
+                      <Polyline positions={selectedRoute.firstLegGeometry} pathOptions={{ color: 'var(--teal)', weight: 5 }} />
+                      <Polyline positions={selectedRoute.metroGeometry} pathOptions={{ color: 'var(--brick)', weight: 5, dashArray: '5, 10' }} />
+                      <Polyline positions={selectedRoute.lastLegGeometry} pathOptions={{ color: 'var(--teal)', weight: 5 }} />
+                    </>
+                  ) : (
+                    /* Render standard continuous route geometry */
+                    selectedRoute.geometry && (
+                      <Polyline positions={selectedRoute.geometry} pathOptions={{ color: 'var(--teal)', weight: 5 }} />
+                    )
+                  )}
+                </>
+              )}
+            </MapContainer>
           </div>
         </>
       )}
