@@ -6,18 +6,28 @@ from sqlalchemy.orm import Session
 from .. import models
 
 
-def filter_places_for_profile(places: List[models.Place], profile) -> List[models.Place]:
-    """Mirrors the filtering logic in the frontend's TripContext.jsx
-    buildItinerary(): match on interests (category) and group type, and
-    fall back to the full pool if nothing matches so the itinerary is
-    never empty."""
-    def matches(place: models.Place) -> bool:
+def filter_places_for_profile(places: List[models.Place], profile, required_minimum: int = 1) -> List[models.Place]:
+    """
+    Filters places by interests and group type. If the strict match yields 
+    too few results for the trip length, it relaxes to a partial match.
+    """
+    def strict_match(place: models.Place) -> bool:
         interest_match = (not profile.interests) or (place.category in profile.interests)
         good_for = place.good_for or []
         group_match = (not good_for) or (profile.group_type in good_for)
         return interest_match and group_match
 
-    filtered = [p for p in places if matches(p)]
+    def loose_match(place: models.Place) -> bool:
+        interest_match = (not profile.interests) or (place.category in profile.interests)
+        good_for = place.good_for or []
+        group_match = (not good_for) or (profile.group_type in good_for)
+        return interest_match or group_match
+
+    filtered = [p for p in places if strict_match(p)]
+    
+    if len(filtered) < required_minimum:
+        filtered = [p for p in places if loose_match(p)]
+        
     return filtered if filtered else places
 
 
