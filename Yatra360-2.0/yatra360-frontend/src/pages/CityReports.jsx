@@ -30,10 +30,15 @@ export default function CityReports() {
     }
   }
 
+  // Calculate Pune P1/P2 rule based on current date
+  const today = new Date().getDate()
+  const isOdd = today % 2 !== 0
+  const ordinal = [1, 21, 31].includes(today) ? 'st' : [2, 22].includes(today) ? 'nd' : [3, 23].includes(today) ? 'rd' : 'th'
+
   return (
     <div className="page">
       <header className="page-header">
-        <h1>City reports & parking</h1>
+        <h1>City Alerts & Parking</h1>
         <p className="page-sub">Crowdsourced issue reporting and parking intelligence near tourist areas.</p>
       </header>
 
@@ -96,6 +101,17 @@ export default function CityReports() {
 
       <section>
         <h2 className="section-title">Parking intelligence</h2>
+        
+        {/* Pune P1/P2 Parking Rule Alert */}
+        <div style={{ background: 'var(--brick-soft)', borderLeft: '4px solid var(--brick)', padding: '14px 18px', marginBottom: '24px', borderRadius: '2px' }}>
+          <h3 style={{ fontSize: '0.95rem', marginBottom: '6px', color: 'var(--brick)' }}>⚠️ Pune P1/P2 Parking Rule Active</h3>
+          <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--ink)' }}>
+            To prevent congestion, Pune enforces alternate-side street parking. Look for street signs marking <strong>P1 (Odd dates)</strong> and <strong>P2 (Even dates)</strong>. 
+            <br /><br />
+            Today is the <strong>{today}{ordinal} ({isOdd ? 'Odd' : 'Even'})</strong>. You must park your vehicle on the <strong>{isOdd ? 'P1' : 'P2'}</strong> side of the street to avoid being towed by the traffic police.
+          </p>
+        </div>
+
         <div className="parking-grid">
           {parkingSpots.map(p => (
             <div key={p.id} className="parking-card">
