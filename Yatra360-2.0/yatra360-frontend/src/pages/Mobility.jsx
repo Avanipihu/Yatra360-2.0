@@ -5,8 +5,10 @@ import { api } from '../services/api'
 export default function Mobility() {
   const [searchParams] = useSearchParams()
   const destinationId = searchParams.get('to')
+  const originId = searchParams.get('from')
 
   const [destination, setDestination] = useState(null)
+  const [origin, setOrigin] = useState(null)
   const [options, setOptions] = useState([])
   const [isLoading, setIsLoading] = useState(true)
 
@@ -17,17 +19,22 @@ export default function Mobility() {
     const destinationPromise = destinationId
       ? api.getPlace(destinationId).catch(() => null)
       : Promise.resolve(null)
+      
+    const originPromise = originId
+      ? api.getPlace(originId).catch(() => null)
+      : Promise.resolve(null)
 
-    Promise.all([destinationPromise, api.getRoutes(destinationId || undefined).catch(() => [])])
-      .then(([place, routes]) => {
+    Promise.all([originPromise, destinationPromise, api.getRoutes(destinationId || undefined).catch(() => [])])
+      .then(([startPlace, endPlace, routes]) => {
         if (cancelled) return
-        setDestination(place)
+        setOrigin(startPlace)
+        setDestination(endPlace)
         setOptions(routes)
       })
       .finally(() => { if (!cancelled) setIsLoading(false) })
 
     return () => { cancelled = true }
-  }, [destinationId])
+  }, [destinationId, originId])
 
   if (isLoading) {
     return (
@@ -44,7 +51,11 @@ export default function Mobility() {
     return (
       <div className="page">
         <header className="page-header">
-          <h1>Smart mobility{destination ? ` to ${destination.name}` : ''}</h1>
+          <h1>Smart mobility</h1>
+          <div className="trip-locations" style={{ marginTop: '1rem', padding: '1rem', background: '#f5f5f5', borderRadius: '8px' }}>
+            <div style={{ marginBottom: '0.5rem' }}><strong>Starting Destination:</strong> {origin ? origin.name : 'Your Current Location'}</div>
+            <div><strong>End Destination:</strong> {destination ? destination.name : 'Not selected'}</div>
+          </div>
         </header>
         <p className="hint-text">No route data available for this destination yet.</p>
       </div>
@@ -63,7 +74,11 @@ export default function Mobility() {
   return (
     <div className="page">
       <header className="page-header">
-        <h1>Smart mobility{destination ? ` to ${destination.name}` : ''}</h1>
+        <h1>Smart mobility</h1>
+        <div className="trip-locations" style={{ marginTop: '1rem', padding: '1rem', background: '#f5f5f5', borderRadius: '8px' }}>
+          <div style={{ marginBottom: '0.5rem' }}><strong>Starting Destination:</strong> {origin ? origin.name : 'Your Current Location'}</div>
+          <div><strong>End Destination:</strong> {destination ? destination.name : 'Not selected'}</div>
+        </div>
         <p className="page-sub">
           Compared on cost, time and walking distance &mdash; not just distance on a map.
         </p>
