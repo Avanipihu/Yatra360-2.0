@@ -24,7 +24,11 @@ export default function Mobility() {
       ? api.getPlace(originId).catch(() => null)
       : Promise.resolve(null)
 
-    Promise.all([originPromise, destinationPromise, api.getRoutes(destinationId || undefined).catch(() => [])])
+    Promise.all([
+      originPromise, 
+      destinationPromise, 
+      api.getRoutes(destinationId || undefined).catch(() => [])
+    ])
       .then(([startPlace, endPlace, routes]) => {
         if (cancelled) return
         setOrigin(startPlace)
@@ -47,25 +51,6 @@ export default function Mobility() {
     )
   }
 
-  if (options.length === 0) {
-    return (
-      <div className="page">
-        <header className="page-header">
-          <h1>Smart mobility</h1>
-          <div className="trip-locations" style={{ marginTop: '1rem', padding: '1rem', background: '#f5f5f5', borderRadius: '8px' }}>
-            <div style={{ marginBottom: '0.5rem' }}><strong>Starting Destination:</strong> {origin ? origin.name : 'Your Current Location'}</div>
-            <div><strong>End Destination:</strong> {destination ? destination.name : 'Not selected'}</div>
-          </div>
-        </header>
-        <p className="hint-text">No route data available for this destination yet.</p>
-      </div>
-    )
-  }
-
-  const fastest = options.reduce((a, b) => (a.timeMin < b.timeMin ? a : b))
-  const cheapest = options.reduce((a, b) => (a.costInr < b.costInr ? a : b))
-  const leastWalking = options.reduce((a, b) => (a.walkingM < b.walkingM ? a : b))
-
   const bbox = destination
     ? `${destination.lon - 0.01}%2C${destination.lat - 0.008}%2C${destination.lon + 0.01}%2C${destination.lat + 0.008}`
     : '73.83%2C18.50%2C73.87%2C18.54'
@@ -75,10 +60,16 @@ export default function Mobility() {
     <div className="page">
       <header className="page-header">
         <h1>Smart mobility</h1>
-        <div className="trip-locations" style={{ marginTop: '1rem', padding: '1rem', background: '#f5f5f5', borderRadius: '8px' }}>
-          <div style={{ marginBottom: '0.5rem' }}><strong>Starting Destination:</strong> {origin ? origin.name : 'Your Current Location'}</div>
-          <div><strong>End Destination:</strong> {destination ? destination.name : 'Not selected'}</div>
+        
+        <div className="stop-card" style={{ marginTop: '1.5rem', marginBottom: '1.5rem' }}>
+          <div style={{ marginBottom: '0.5rem', fontSize: '0.95rem' }}>
+            <strong style={{ color: 'var(--basalt)' }}>Starting Destination:</strong> {origin ? origin.name : 'Your Current Location'}
+          </div>
+          <div style={{ fontSize: '0.95rem' }}>
+            <strong style={{ color: 'var(--basalt)' }}>End Destination:</strong> {destination ? destination.name : 'Not selected'}
+          </div>
         </div>
+
         <p className="page-sub">
           Compared on cost, time and walking distance &mdash; not just distance on a map.
         </p>
@@ -88,24 +79,34 @@ export default function Mobility() {
         <p className="hint-text">No destination selected. Showing a sample comparison &mdash; open this page from an itinerary stop's "Directions" button for a specific route.</p>
       )}
 
-      <div className="route-compare">
-        {options.map(opt => (
-          <div key={opt.mode} className="route-card">
-            <h3>{opt.mode}</h3>
-            <dl className="route-stats">
-              <div><dt>Cost</dt><dd>{opt.costInr === 0 ? 'Free' : `₹${opt.costInr}`}</dd></div>
-              <div><dt>Time</dt><dd>{opt.timeMin} min</dd></div>
-              <div><dt>Walking</dt><dd>{opt.walkingM} m</dd></div>
-            </dl>
-            <p className="route-notes">{opt.notes}</p>
-            <div className="route-badges">
-              {opt === fastest && <span className="pill pill-teal">Fastest</span>}
-              {opt === cheapest && <span className="pill pill-gold">Cheapest</span>}
-              {opt === leastWalking && <span className="pill pill-teal">Least walking</span>}
-            </div>
-          </div>
-        ))}
-      </div>
+      {options.length === 0 && destination ? (
+        <p className="hint-text">No route data available for this destination yet.</p>
+      ) : (
+        <div className="route-compare">
+          {options.map(opt => {
+            const isFastest = opt === options.reduce((a, b) => (a.timeMin < b.timeMin ? a : b));
+            const isCheapest = opt === options.reduce((a, b) => (a.costInr < b.costInr ? a : b));
+            const isLeastWalking = opt === options.reduce((a, b) => (a.walkingM < b.walkingM ? a : b));
+
+            return (
+              <div key={opt.mode} className="route-card">
+                <h3>{opt.mode}</h3>
+                <dl className="route-stats">
+                  <div><dt>Cost</dt><dd>{opt.costInr === 0 ? 'Free' : `₹${opt.costInr}`}</dd></div>
+                  <div><dt>Time</dt><dd>{opt.timeMin} min</dd></div>
+                  <div><dt>Walking</dt><dd>{opt.walkingM} m</dd></div>
+                </dl>
+                <p className="route-notes">{opt.notes}</p>
+                <div className="route-badges">
+                  {isFastest && <span className="pill pill-teal">Fastest</span>}
+                  {isCheapest && <span className="pill pill-gold">Cheapest</span>}
+                  {isLeastWalking && <span className="pill pill-teal">Least walking</span>}
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      )}
 
       <div className="map-embed">
         <iframe
