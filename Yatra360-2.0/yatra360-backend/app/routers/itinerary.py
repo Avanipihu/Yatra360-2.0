@@ -14,7 +14,7 @@ def generate_itinerary(profile: schemas.TripProfileIn, db: Session = Depends(get
     if not all_places:
         raise HTTPException(status_code=503, detail="No place data available yet")
 
-    filtered = filter_places_for_profile(all_places, profile)
+    filtered = filter_places_for_profile(all_places, profile, required_minimum=profile.days)
     day_groups = build_itinerary(filtered, profile.days)
 
     trip = models.Trip(
@@ -30,7 +30,7 @@ def generate_itinerary(profile: schemas.TripProfileIn, db: Session = Depends(get
         selected_hotel_id=profile.selected_hotel_id,
     )
     db.add(trip)
-    db.flush()  # assign trip.id before creating stops
+    db.flush()
 
     for day_number, stops in enumerate(day_groups, start=1):
         for order_index, place in enumerate(stops):
