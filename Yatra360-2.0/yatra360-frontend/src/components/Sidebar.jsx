@@ -13,7 +13,7 @@ export default function Sidebar() {
   return (
     <aside className="sidebar">
       <div className="brand" style={{ padding: '0 8px 20px 8px', justifyContent: 'center' }}>
-        <img src="/yatra360-logo.png" alt="Yatra360" style={{ maxWidth: '140px', height: 'auto', display: 'block' }} />
+        <img src="/yatra360-logo.png" alt="Yatra360" style={{ maxWidth: '100px', height: 'auto', display: 'block' }} />
       </div>
       <nav className="nav">
         {NAV_ITEMS.map(({ to, label, icon: Icon }) => (
