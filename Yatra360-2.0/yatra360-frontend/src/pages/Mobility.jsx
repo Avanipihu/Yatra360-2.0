@@ -4,7 +4,6 @@ import { api } from '../services/api'
 import { MapContainer, TileLayer, Polyline, useMap } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 
-// Helper component to auto-zoom the map to fit the selected route
 function RouteBounds({ route }) {
   const map = useMap()
   useEffect(() => {
@@ -17,20 +16,27 @@ function RouteBounds({ route }) {
 
 export default function Mobility() {
   const [searchParams, setSearchParams] = useSearchParams()
-  const destinationId = searchParams.get('to')
-  const originId = searchParams.get('from')
+  const destinationId = searchParams.get('to') || ''
+  const originId = searchParams.get('from') || ''
 
   const [destination, setDestination] = useState(null)
   const [origin, setOrigin] = useState(null)
   const [options, setOptions] = useState([])
   const [selectedRoute, setSelectedRoute] = useState(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
 
-  const [fromInput, setFromInput] = useState(originId || '')
-  const [toInput, setToInput] = useState(destinationId || '')
+  const [fromInput, setFromInput] = useState(originId)
+  const [toInput, setToInput] = useState(destinationId)
+
+  useEffect(() => {
+    setFromInput(originId)
+    setToInput(destinationId)
+  }, [originId, destinationId])
 
   useEffect(() => {
     let cancelled = false
+    if (!destinationId && !originId) return
+
     setIsLoading(true)
     setSelectedRoute(null)
 
@@ -46,7 +52,6 @@ export default function Mobility() {
       })
       .then(data => {
         if (cancelled) return
-        
         setOrigin({ name: data.from, lat: data.from_coordinates.lat, lon: data.from_coordinates.lon })
         setDestination({ name: data.destination, lat: data.destination_coordinates.lat, lon: data.destination_coordinates.lon })
         
@@ -67,35 +72,21 @@ export default function Mobility() {
       .catch(err => {
         console.error(err)
         if (!cancelled) {
-            setOrigin({ name: originId })
-            setDestination({ name: destinationId })
-            setOptions([])
+          setOrigin({ name: originId })
+          setDestination({ name: destinationId })
+          setOptions([])
         }
       })
       .finally(() => { if (!cancelled) setIsLoading(false) })
-      
+    } else if (destinationId && !originId) {
+      api.getPlace(destinationId).then(endPlace => {
+        if (cancelled) return
+        setDestination(endPlace)
+        setOrigin(null)
+        setOptions([])
+      }).finally(() => { if (!cancelled) setIsLoading(false) })
     } else {
-      const destinationPromise = destinationId
-        ? api.getPlace(destinationId).catch(() => null)
-        : Promise.resolve(null)
-        
-      const originPromise = originId && originId !== 'current'
-        ? api.getPlace(originId).catch(() => null)
-        : Promise.resolve(null)
-
-      Promise.all([
-        originPromise, 
-        destinationPromise, 
-        api.getRoutes(destinationId || undefined).catch(() => [])
-      ])
-        .then(([startPlace, endPlace, routes]) => {
-          if (cancelled) return
-          setOrigin(startPlace)
-          setDestination(endPlace)
-          setOptions(routes)
-          if (routes.length > 0) setSelectedRoute(routes[0])
-        })
-        .finally(() => { if (!cancelled) setIsLoading(false) })
+      setIsLoading(false)
     }
 
     return () => { cancelled = true }
@@ -108,13 +99,12 @@ export default function Mobility() {
     }
   }
 
-  // Fallback center if no route geometry is loaded
   const defaultCenter = destination ? [destination.lat, destination.lon] : [18.52, 73.85]
 
   return (
     <div className="page">
       <header className="page-header">
-        <h1>Smart mobility</h1>
+        <h1>Transit & Routes</h1>
         <p className="page-sub">
           Compared on cost, time and walking distance &mdash; not just distance on a map.
         </p>
@@ -154,7 +144,7 @@ export default function Mobility() {
           {(origin || destination) && (
             <div className="stop-card" style={{ marginBottom: '1.5rem' }}>
               <div style={{ marginBottom: '0.5rem', fontSize: '0.95rem' }}>
-                <strong style={{ color: 'var(--basalt)' }}>Starting Destination:</strong> {origin ? origin.name : 'Your Current Location'}
+                <strong style={{ color: 'var(--basalt)' }}>Starting Destination:</strong> {origin ? origin.name : 'Awaiting input...'}
               </div>
               <div style={{ fontSize: '0.95rem' }}>
                 <strong style={{ color: 'var(--basalt)' }}>End Destination:</strong> {destination ? destination.name : 'Not selected'}
@@ -166,9 +156,13 @@ export default function Mobility() {
             <p className="hint-text">No destination selected. Enter your locations above or open this page from an itinerary stop's "Directions" button.</p>
           )}
 
-          {options.length === 0 && (destinationId || originId) ? (
+          {destination && !originId && (
+            <p className="hint-text">Please enter a starting location above to view route options to {destination.name}.</p>
+          )}
+
+          {options.length === 0 && (destinationId && originId) ? (
             <p className="hint-text">No route data available for these locations yet. Please try another search.</p>
-          ) : (
+          ) : options.length > 0 && (
             <div className="route-compare">
               {options.map((opt, index) => {
                 const isFastest = opt === options.reduce((a, b) => (a.timeMin < b.timeMin ? a : b), options[0]);
@@ -222,7 +216,6 @@ export default function Mobility() {
                 <>
                   <RouteBounds route={selectedRoute} />
                   
-                  {/* Render multi-modal segments if available (Bus + Metro) */}
                   {selectedRoute.metroGeometry ? (
                     <>
                       <Polyline positions={selectedRoute.firstLegGeometry} pathOptions={{ color: 'var(--teal)', weight: 5 }} />
@@ -230,7 +223,6 @@ export default function Mobility() {
                       <Polyline positions={selectedRoute.lastLegGeometry} pathOptions={{ color: 'var(--teal)', weight: 5 }} />
                     </>
                   ) : (
-                    /* Render standard continuous route geometry */
                     selectedRoute.geometry && (
                       <Polyline positions={selectedRoute.geometry} pathOptions={{ color: 'var(--teal)', weight: 5 }} />
                     )
