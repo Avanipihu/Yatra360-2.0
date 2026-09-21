@@ -8,8 +8,9 @@ from .. import models
 
 def filter_places_for_profile(places: List[models.Place], profile, required_minimum: int = 1) -> List[models.Place]:
     """
-    Filters places by interests and group type. If the strict match yields 
-    too few results for the trip length, it relaxes to a partial match.
+    Filters places through a 3-tier fallback system. 
+    It starts strict, relaxes to partial matches, and finally 
+    defaults to the entire database to ensure long trips don't have empty days.
     """
     def strict_match(place: models.Place) -> bool:
         interest_match = (not profile.interests) or (place.category in profile.interests)
@@ -23,10 +24,17 @@ def filter_places_for_profile(places: List[models.Place], profile, required_mini
         group_match = (not good_for) or (profile.group_type in good_for)
         return interest_match or group_match
 
+    # Tier 1: Try strict matching (must match BOTH interest and group type)
     filtered = [p for p in places if strict_match(p)]
     
+    # Tier 2: If not enough places, relax to loose matching (must match AT LEAST ONE criteria)
     if len(filtered) < required_minimum:
         filtered = [p for p in places if loose_match(p)]
+        
+    # Tier 3: If STILL not enough places for a long vacation, use the entire database 
+    # to guarantee the itinerary has as many stops as possible.
+    if len(filtered) < required_minimum:
+        filtered = places
         
     return filtered if filtered else places
 
