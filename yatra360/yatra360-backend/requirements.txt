@@ -1,0 +1,9 @@
+fastapi==0.115.0
+uvicorn[standard]==0.30.6
+sqlalchemy==2.0.35
+pydantic==2.9.2
+python-dotenv==1.0.1
+
+# Needed once DATABASE_URL points at Postgres (e.g. on Render).
+# Harmless to install even while running locally against SQLite.
+psycopg2-binary==2.9.9
