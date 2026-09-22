@@ -589,7 +589,7 @@ def seed_demo_businesses(db: Session):
             segments=["Couples", "Solo", "Pre-booked"],
             rating=4.7,
             is_verified=True,
-            image_url="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1024&q=70",
+            image_url="https://images.unsplash.com/photo-1682414180867-99b4b8d76a33?auto=format&fit=crop&w=1024&q=70"),
         ),
         dict(
             name="Sahyadri Trails & Guides",
@@ -605,7 +605,7 @@ def seed_demo_businesses(db: Session):
             segments=["Groups", "Solo", "Pre-booked"],
             rating=4.8,
             is_verified=True,
-            image_url="https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=1024&q=70",
+            image_url="https://images.unsplash.com/photo-1720531294753-d9e3494a9460?auto=format&fit=crop&w=1024&q=70"),
         ),
         dict(
             name="Tulshibaug Copper & Brass",
@@ -620,7 +620,7 @@ def seed_demo_businesses(db: Session):
             tagline="Hand-beaten copper and brass, made in the workshop behind the shop.",
             segments=["Family", "Walk-in"],
             rating=4.3,
-            image_url="https://images.unsplash.com/photo-1582582494705-f8ce0b0c24f0?auto=format&fit=crop&w=1024&q=70",
+            image_url="https://images.unsplash.com/photo-1703643004820-de1df4e058f2?auto=format&fit=crop&w=1024&q=70"),
         ),
     ]
 
