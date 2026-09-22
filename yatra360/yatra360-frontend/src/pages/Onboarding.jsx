@@ -1,3 +1,6 @@
+import {
+  INTERESTS, GROUP_TYPES, BUDGETS, BUDGET_LABELS, MOBILITY_PREFS, ACCESSIBILITY
+} from '../constants'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTrip } from '../context/TripContext'
