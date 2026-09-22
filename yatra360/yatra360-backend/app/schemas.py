@@ -143,7 +143,7 @@ class TripOut(CamelModel):
     budget: str
     interests: List[str]
     mobility_pref: str
-    accessibility: List[str]
+    accessibility: List[str] = []
     needs_hotel: Optional[bool] = None
     selected_hotel_id: Optional[str] = None
     itinerary: List[ItineraryDayOut]
@@ -172,6 +172,12 @@ class CoordOut(CamelModel):
     lon: float
 
 
+class StationOut(CamelModel):
+    name: str
+    lat: float
+    lon: float
+
+
 class RouteLegOut(CamelModel):
     type: str
     cost: int
@@ -182,6 +188,7 @@ class RouteLegOut(CamelModel):
     first_leg_geometry: Optional[List[List[float]]] = None
     metro_geometry: Optional[List[List[float]]] = None
     last_leg_geometry: Optional[List[List[float]]] = None
+    stations: Optional[List[StationOut]] = None
 
 
 class RouteCompareOut(CamelModel):
