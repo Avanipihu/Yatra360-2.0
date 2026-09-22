@@ -1,13 +1,10 @@
-import {
-  INTERESTS, GROUP_TYPES, BUDGETS, BUDGET_LABELS, MOBILITY_PREFS, ACCESSIBILITY
-} from '../constants'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTrip } from '../context/TripContext'
 import PlacePhoto from '../components/PlacePhoto'
 import { api } from '../services/api'
 import {
-  INTERESTS, GROUP_TYPES, BUDGETS, MOBILITY_PREFS, ACCESSIBILITY
+  INTERESTS, GROUP_TYPES, BUDGETS, BUDGET_LABELS, MOBILITY_PREFS, ACCESSIBILITY
 } from '../constants'
 
 export default function Onboarding() {
@@ -74,7 +71,7 @@ export default function Onboarding() {
     return (
       <div className="page onboarding">
         <header className="page-header">
-          <h1>Places to stay on a {form.budget.toLowerCase()} budget</h1>
+          <h1>Places to stay in the {BUDGET_LABELS[form.budget] || form.budget} range</h1>
           <p className="page-sub">
             {localCount > 0
               ? `Including ${localCount} owner-run local stay${localCount === 1 ? '' : 's'} registered directly on Yatra360 \u2014 shown first.`
@@ -196,7 +193,7 @@ export default function Onboarding() {
                   className={'chip' + (form.budget === b ? ' chip-active' : '')}
                   onClick={() => setForm(f => ({ ...f, budget: b }))}
                 >
-                  {b}
+                  {b} <span className="chip-sub">({BUDGET_LABELS[b]})</span>
                 </button>
               ))}
             </div>
