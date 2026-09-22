@@ -57,10 +57,14 @@ class Hotel(Base):
     name = Column(String, nullable=False)
     area = Column(String)
     price_per_night = Column(Integer)
-    budget = Column(String)  # Low | Moderate | Premium
+    budget = Column(String)
     rating = Column(Float)
     distance_to_center_km = Column(Float)
     source = Column(String)
+
+    # Added for hotel cards
+    description = Column(Text)
+    image_url = Column(String)
 
 
 class Business(Base):
