@@ -53,11 +53,11 @@ class HotelOut(CamelModel):
     rating: Optional[float] = None
     distance_to_center_km: Optional[float] = None
     source: Optional[str] = None
-    # Set when this listing came from a business that registered itself,
-    # so the tourist UI can mark it as a local, owner-run option.
+
     is_local: bool = False
     category: Optional[str] = None
     tagline: Optional[str] = None
+    description: Optional[str] = None
     image_url: Optional[str] = None
     capacity: Optional[int] = None
     capacity_unit: Optional[str] = None
