@@ -107,13 +107,13 @@ def seed_if_empty(db: Session):
     # place doesn't have its own routing entries yet.
     default_routes = [
         models.RouteOption(place_id=None, mode="Bus + Metro", cost_inr=40, time_min=55, walking_m=500,
-                            notes="Cheapest option, one interchange at Shivajinagar"),
+                           notes="Cheapest option, one interchange at Shivajinagar"),
         models.RouteOption(place_id=None, mode="Auto + Walk", cost_inr=120, time_min=35, walking_m=600,
-                            notes="Faster, moderate walking"),
+                           notes="Faster, moderate walking"),
         models.RouteOption(place_id=None, mode="Cab", cost_inr=220, time_min=25, walking_m=50,
-                            notes="Least walking, highest cost"),
+                           notes="Least walking, highest cost"),
         models.RouteOption(place_id=None, mode="Walk", cost_inr=0, time_min=70, walking_m=4200,
-                            notes="Only suitable if minimal-walking is not a constraint"),
+                           notes="Only suitable if minimal-walking is not a constraint"),
     ]
     db.add_all(default_routes)
 
@@ -133,13 +133,13 @@ def seed_if_empty(db: Session):
 
     parking = [
         models.ParkingSpot(id="p1", near="Shaniwar Wada", availability="Low",
-                            note="Weekend footfall fills the paid lot by 11 AM \u2014 arrive early or use two-wheeler stand."),
+                           note="Weekend footfall fills the paid lot by 11 AM \u2014 arrive early or use two-wheeler stand."),
         models.ParkingSpot(id="p2", near="Aga Khan Palace", availability="High",
-                            note="Large open lot, rarely full even on weekends."),
+                           note="Large open lot, rarely full even on weekends."),
         models.ParkingSpot(id="p3", near="Dagdusheth Temple", availability="Low",
-                            note="No dedicated lot nearby; nearest paid parking is 400m away."),
+                           note="No dedicated lot nearby; nearest paid parking is 400m away."),
         models.ParkingSpot(id="p4", near="Osho Teerth Park", availability="Moderate",
-                            note="Street parking generally available on weekdays."),
+                           note="Street parking generally available on weekdays."),
     ]
     db.add_all(parking)
 
@@ -313,21 +313,21 @@ def seed_demo_businesses(db: Session):
              capacity=6, capacity_unit="rooms", price_per_night=1800, price_band="Moderate",
              tagline="Six rooms in a restored 90-year-old wada, run by the family that grew up in it.",
              segments=["Couples", "Solo", "Pre-booked"], rating=4.7, is_verified=True,
-             image_url="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1024&q=70"),
+             image_url="https://images.unsplash.com/photo-1682414180867-99b4b8d76a33?auto=format&fit=crop&w=1024&q=70"),
         dict(name="Sahyadri Trails & Guides", category="Guide & tour operator", email="walk@sahyadritrails.in",
              locality="Kothrud", address="Office 3, Paud Road, Kothrud",
              capacity=12, capacity_unit="people per walk",
              signature_item="Sunrise Vetal Tekdi walk", price_band="Moderate",
              tagline="Licensed local guides running heritage and hill walks in Marathi, Hindi and English.",
              segments=["Groups", "Solo", "Pre-booked"], rating=4.8, is_verified=True,
-             image_url="https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=1024&q=70"),
+             image_url="https://images.unsplash.com/photo-1720531294753-d9e3494a9460?auto=format&fit=crop&w=1024&q=70"),
         dict(name="Tulshibaug Copper & Brass", category="Artisan & handicrafts", email="shop@tulshibaugbrass.in",
              locality="Budhwar Peth", address="Lane 4, Tulshibaug market",
              capacity=15, capacity_unit="visitors", signature_item="Hand-beaten brass diyas",
              price_band="Low",
              tagline="Hand-beaten copper and brass, made in the workshop behind the shop.",
              segments=["Family", "Walk-in"], rating=4.3,
-             image_url="https://images.unsplash.com/photo-1582582494705-f8ce0b0c24f0?auto=format&fit=crop&w=1024&q=70"),
+             image_url="https://images.unsplash.com/photo-1703643004820-de1df4e058f2?auto=format&fit=crop&w=1024&q=70"),
     ]
 
     password_hash = _hash_password(DEMO_PASSWORD)
