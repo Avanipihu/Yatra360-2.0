@@ -1,3 +1,9 @@
+# app/main.py
+from .database import engine
+from . import models
+
+# Ensure tables exist before running startup seeds
+models.Base.metadata.create_all(bind=engine)
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
