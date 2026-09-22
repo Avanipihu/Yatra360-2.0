@@ -8,7 +8,11 @@ export const INTERESTS = [
 ]
 
 export const GROUP_TYPES = ['Solo', 'Couple', 'Family', 'Friends', 'Senior citizens']
-export const BUDGETS = ['Low', 'Moderate', 'Premium']
+export const BUDGET_LABELS = {
+  Low: '₹10,000 - ₹20,000',
+  Moderate: '₹20,000 - ₹40,000',
+  Premium: '₹40,000 - ₹80,000+',
+}
 export const MOBILITY_PREFS = ['Walking', 'Public transport', 'Metro', 'Bus', 'Auto', 'Cab', 'Mixed']
 export const ACCESSIBILITY = ['Minimal walking', 'Wheelchair accessible', 'Elderly-friendly', 'Child-friendly']
 export const CITY_REPORT_TYPES = ['Pothole', 'Waterlogging', 'Broken streetlight', 'Blocked footpath', 'Other']
