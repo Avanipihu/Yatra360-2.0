@@ -1,4 +1,5 @@
 import os
+from sqlalchemy import inspect
 from sqlalchemy.orm import Session
 
 from . import models
@@ -11,9 +12,13 @@ DEMO_PASSWORD = os.getenv("DEMO_PASSWORD", "demo1234")
 def seed_places(db: Session):
     """
     Seeds essential Pune places/attractions if the places table is empty.
+    Automatically filters out fields that are not defined on the Place model.
     """
-    # Adjust 'Place' to whatever your SQLAlchemy model is named (e.g. models.Place or models.Attraction)
     if hasattr(models, "Place") and db.query(models.Place).count() == 0:
+        # Get valid column names defined on the Place model
+        place_mapper = inspect(models.Place)
+        valid_cols = {col.key for col in place_mapper.mapper.column_attrs}
+
         pune_places = [
             dict(
                 name="Shaniwar Wada",
@@ -63,7 +68,9 @@ def seed_places(db: Session):
         ]
 
         for p in pune_places:
-            db.add(models.Place(**p))
+            # Only keep key-value pairs where the key exists as a column on models.Place
+            filtered_p = {k: v for k, v in p.items() if k in valid_cols}
+            db.add(models.Place(**filtered_p))
 
         db.commit()
 
