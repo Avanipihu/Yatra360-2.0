@@ -18,28 +18,9 @@ app = FastAPI(
     version="0.2.0",
 )
 
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-
-app = FastAPI(
-    title="Yatra360 Smart Mobility API",
-    # ... existing FastAPI parameters ...
-)
-
-# Add CORS middleware right here:
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Or specify your Render frontend URL
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-# ... rest of your routes and startup logic ...
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=CORS_ORIGINS,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
