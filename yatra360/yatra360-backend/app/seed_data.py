@@ -1,12 +1,18 @@
+import os
 from sqlalchemy.orm import Session
+
+from . import models
+from .data.pune_locations import coords_for
+from .routers.business import _hash_password
+
+# Default demo password; fallback to environment variable if set
+DEMO_PASSWORD = os.getenv("DEMO_PASSWORD", "demo1234")
+
+
 def seed_demo_businesses(db: Session):
     """
     Seeds a handful of registered local businesses.
     """
-
-    from .data.pune_locations import coords_for
-    from .routers.business import _hash_password
-
     if db.query(models.Business).count() > 0:
         return
 
@@ -130,3 +136,10 @@ def seed_demo_businesses(db: Session):
 
     db.add_all(rows)
     db.commit()
+
+
+def seed_if_empty(db: Session):
+    """
+    Alias wrapper so imports looking for `seed_if_empty` succeed.
+    """
+    seed_demo_businesses(db)
