@@ -88,9 +88,9 @@ def seed_if_empty(db: Session):
             image_credit="Photo: Unsplash", locality="Kothrud",
         ),
     ]
-    db.add_all(places)
+      db.add_all(places)
 
-        hotels = [
+    hotels = [
         models.Hotel(
             id="hotel-1",
             name="Hotel Sunderban",
@@ -130,6 +130,7 @@ def seed_if_empty(db: Session):
             image_url="https://images.unsplash.com/photo-1564501049412-61c2a3083791?auto=format&fit=crop&w=1024&q=80"
         ),
     ]
+
     db.add_all(hotels)
 
     # Default (place_id=None) route options, used as a fallback whenever a
