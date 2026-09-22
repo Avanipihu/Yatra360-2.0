@@ -5,13 +5,72 @@ from . import models
 from .data.pune_locations import coords_for
 from .routers.business import _hash_password
 
-# Default demo password; fallback to environment variable if set
 DEMO_PASSWORD = os.getenv("DEMO_PASSWORD", "demo1234")
+
+
+def seed_places(db: Session):
+    """
+    Seeds essential Pune places/attractions if the places table is empty.
+    """
+    # Adjust 'Place' to whatever your SQLAlchemy model is named (e.g. models.Place or models.Attraction)
+    if hasattr(models, "Place") and db.query(models.Place).count() == 0:
+        pune_places = [
+            dict(
+                name="Shaniwar Wada",
+                category="Historical Landmark",
+                locality="Kasba Peth",
+                description="18th-century fortification seat of the Peshwas of the Maratha Empire.",
+                rating=4.5,
+                lat=18.5196,
+                lon=73.8553,
+            ),
+            dict(
+                name="Aga Khan Palace",
+                category="Historical Landmark",
+                locality="Kalyani Nagar",
+                description="Historic palace with Italian arches and spacious lawns, closely linked to the Indian freedom movement.",
+                rating=4.6,
+                lat=18.5529,
+                lon=73.9015,
+            ),
+            dict(
+                name="Saras Baug",
+                category="Park & Garden",
+                locality="Saras Baug",
+                description="Scenic park surrounding the Talyatla Ganpati Temple.",
+                rating=4.4,
+                lat=18.5008,
+                lon=73.8528,
+            ),
+            dict(
+                name="Dagdusheth Halwai Ganpati Temple",
+                category="Religious Site",
+                locality="Budhwar Peth",
+                description="Famous Hindu temple dedicated to Lord Ganesha, popular among pilgrims.",
+                rating=4.8,
+                lat=18.5164,
+                lon=73.8560,
+            ),
+            dict(
+                name="Vetal Tekdi",
+                category="Nature & Hiking",
+                locality="Kothrud",
+                description="Prominent hill in Pune city limits offering panoramic views and walking trails.",
+                rating=4.7,
+                lat=18.5284,
+                lon=73.8175,
+            ),
+        ]
+
+        for p in pune_places:
+            db.add(models.Place(**p))
+
+        db.commit()
 
 
 def seed_demo_businesses(db: Session):
     """
-    Seeds a handful of registered local businesses.
+    Seeds registered local businesses.
     """
     if db.query(models.Business).count() > 0:
         return
@@ -119,10 +178,8 @@ def seed_demo_businesses(db: Session):
     password_hash = _hash_password(DEMO_PASSWORD)
 
     rows = []
-
     for d in demo:
         coord = coords_for(d["locality"]) or (18.5204, 73.8567)
-
         rows.append(
             models.Business(
                 password_hash=password_hash,
@@ -140,6 +197,7 @@ def seed_demo_businesses(db: Session):
 
 def seed_if_empty(db: Session):
     """
-    Alias wrapper so imports looking for `seed_if_empty` succeed.
+    Main seed function invoked on application startup.
     """
+    seed_places(db)
     seed_demo_businesses(db)
