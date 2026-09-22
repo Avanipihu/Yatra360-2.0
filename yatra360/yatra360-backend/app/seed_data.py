@@ -90,16 +90,45 @@ def seed_if_empty(db: Session):
     ]
     db.add_all(places)
 
-    hotels = [
-        models.Hotel(id="hotel-1", name="Hotel Sunderban", area="Shivajinagar",
-                     price_per_night=2200, budget="Moderate", rating=4.1,
-                     distance_to_center_km=1.8, source="Sample data (govt. tourism API pending)"),
-        models.Hotel(id="hotel-2", name="Backpacker Panda Koregaon Park", area="Koregaon Park",
-                     price_per_night=900, budget="Low", rating=4.3,
-                     distance_to_center_km=3.2, source="Sample data (govt. tourism API pending)"),
-        models.Hotel(id="hotel-3", name="The Pune Residency", area="Camp",
-                     price_per_night=5400, budget="Premium", rating=4.6,
-                     distance_to_center_km=0.9, source="Sample data (govt. tourism API pending)"),
+        hotels = [
+        models.Hotel(
+            id="hotel-1",
+            name="Hotel Sunderban",
+            area="Shivajinagar",
+            price_per_night=2200,
+            budget="Moderate",
+            rating=4.1,
+            distance_to_center_km=1.8,
+            source="Sample data (govt. tourism API pending)",
+            description="A comfortable stay in Shivajinagar with convenient access to central Pune.",
+            image_url="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1024&q=80"
+        ),
+
+        models.Hotel(
+            id="hotel-2",
+            name="Backpacker Panda Koregaon Park",
+            area="Koregaon Park",
+            price_per_night=900,
+            budget="Low",
+            rating=4.3,
+            distance_to_center_km=3.2,
+            source="Sample data (govt. tourism API pending)",
+            description="A budget-friendly stay in Koregaon Park, suitable for travellers looking for an affordable base.",
+            image_url="https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&w=1024&q=80"
+        ),
+
+        models.Hotel(
+            id="hotel-3",
+            name="The Pune Residency",
+            area="Camp",
+            price_per_night=5400,
+            budget="Premium",
+            rating=4.6,
+            distance_to_center_km=0.9,
+            source="Sample data (govt. tourism API pending)",
+            description="A premium city-centre stay in the Camp area, close to major attractions and services.",
+            image_url="https://images.unsplash.com/photo-1564501049412-61c2a3083791?auto=format&fit=crop&w=1024&q=80"
+        ),
     ]
     db.add_all(hotels)
 
