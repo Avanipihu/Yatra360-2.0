@@ -8,6 +8,8 @@ export const INTERESTS = [
 ]
 
 export const GROUP_TYPES = ['Solo', 'Couple', 'Family', 'Friends', 'Senior citizens']
+export const BUDGETS = ['Low', 'Moderate', 'Premium']
+
 export const BUDGET_LABELS = {
   Low: '₹10,000 - ₹20,000',
   Moderate: '₹20,000 - ₹40,000',
