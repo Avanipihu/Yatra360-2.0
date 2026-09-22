@@ -55,7 +55,7 @@ def haversine_km(a: Coord, b: Coord) -> float:
 
 
 def _fetch_osrm_geometry(start: Coord, end: Coord) -> Optional[List[Coord]]:
-    # OSRM expects lon,lat in request
+    # OSRM expects lon,lat;lon,lat format
     url = f"https://router.project-osrm.org/route/v1/driving/{start},{start[0]};{end},{end[0]}?overview=full&geometries=geojson"
     try:
         req = urllib.request.Request(url, headers={"User-Agent": "Yatra360-Prototype/1.0"})
@@ -121,8 +121,9 @@ def _best_metro_leg(start: Coord, end: Coord):
         if best is None or score < best[0]:
             geometry = [[round(lat, 6), round(lon, 6)] for _, lat, lon in ride_pts]
             stations_meta = [{"name": name, "lat": round(lat, 6), "lon": round(lon, 6)} for name, lat, lon in ride_pts]
-            best = (score, line_name, ride_pts[0][0], ride_pts[-1][0], geometry, ride_km,
-                    (ride_pts[0], ride_pts[0]), (ride_pts[-1], ride_pts[-1]), stations_meta)
+            board_pt = (ride_pts[0], ride_pts[0])
+            alight_pt = (ride_pts[-1], ride_pts[-1])
+            best = (score, line_name, ride_pts[0][0], ride_pts[-1][0], geometry, ride_km, board_pt, alight_pt, stations_meta)
     if not best:
         return None
     _, line_name, board, alight, geometry, ride_km, board_pt, alight_pt, stations_meta = best
